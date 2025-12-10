@@ -23,6 +23,9 @@ bot = telebot.TeleBot(TOKEN, parse_mode="Markdown")
 
 DATA_FILE = "data.txt"
 
+# Удаляем старый webhook, чтобы не было 409 Conflict
+bot.remove_webhook()
+
 # ------------------------
 # 1. Работа с файлом
 # ------------------------
@@ -155,11 +158,11 @@ def edit_word(message):
     keys_part, new_value = text.split(" ", 1)
     keys = [k.strip().lower() for k in keys_part.split(",") if k.strip()]
 
-    # Ищем абзац по ключам
+    # Ищем абзац, где хотя бы один ключ совпадает
     found = False
     for item in answers:
         item_keys_lower = [k.lower() for k in item['keys']]
-        if set(keys) == set(item_keys_lower):  # точное совпадение ключей
+        if any(k in item_keys_lower for k in keys):
             item['text'] = new_value
             found = True
             break
@@ -169,6 +172,7 @@ def edit_word(message):
         bot.reply_to(message, f"✅ Абзац для ключей *{', '.join(keys)}* обновлён!")
     else:
         bot.reply_to(message, f"⚠️ Абзац для ключей *{', '.join(keys)}* не найден.")
+
         
 # ------------------------
 # 5. Поиск слов (гибкий)
