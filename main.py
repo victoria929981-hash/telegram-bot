@@ -6,6 +6,9 @@ import re
 from flask import Flask
 from threading import Thread
 
+# Удаляем старый webhook, чтобы не было 409 Conflict
+bot.remove_webhook()
+
 app = Flask('')
 
 @app.route('/')
@@ -22,9 +25,6 @@ TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode="Markdown")
 
 DATA_FILE = "data.txt"
-
-# Удаляем старый webhook, чтобы не было 409 Conflict
-bot.remove_webhook()
 
 # ------------------------
 # 1. Работа с файлом
