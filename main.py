@@ -7,6 +7,16 @@ import re
 TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode="Markdown")
 
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+
+scope = ["https://spreadsheets.google.com/feeds",
+         "https://www.googleapis.com/auth/drive"]
+
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+client = gspread.authorize(creds)
+sheet = client.open_by_key(SPREADSHEET_ID).sheet1
+
 # Удаляем старый webhook, чтобы не было 409 Conflict
 bot.remove_webhook()
 
