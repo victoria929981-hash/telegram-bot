@@ -3,20 +3,6 @@ import time
 import telebot
 from telebot import types
 import re
-from flask import Flask
-from threading import Thread
-
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Бот работает!"
-
-def run():
-    app.run(host='0.0.0.0', port=3000)
-
-t = Thread(target=run)
-t.start()
 
 TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode="Markdown")
@@ -199,15 +185,14 @@ def handle_message(message):
                              "Добавь его командой:\n`/add название1,название2(названия без пробелов) текст_абзац`")
 
 # ------------------------
-# 6. Запуск
+# 7. Запуск polling
 # ------------------------
-
-if __name__ == '__main__':
-    print("Бот запущен. Ожидаю сообщений...")
-while True:
-    try:
-        bot.polling(none_stop=True)
-    except Exception as e:
-        print("Ошибка polling:", e)
-        time.sleep(5)
+if __name__ == "__main__":
+    print("Бот запущен!")
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=0, timeout=30)
+        except Exception as e:
+            print("Ошибка polling:", e)
+            time.sleep(5)
         
