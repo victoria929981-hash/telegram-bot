@@ -38,7 +38,7 @@ scope = ["https://spreadsheets.google.com/feeds",
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
 
-SPREADSHEET_ID = "ВАШ_SPREADSHEET_ID"  # замените на свой
+SPREADSHEET_ID = "1t3qbSdSgSKUUOmLqqHE_IOon2PpjkgkLbd6Tc14dAM4"  # замените на свой
 sheet = client.open_by_key(SPREADSHEET_ID).sheet1
 
 # ----------------------------
