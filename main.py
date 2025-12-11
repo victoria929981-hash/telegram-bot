@@ -3,19 +3,38 @@ import time
 import telebot
 from telebot import types
 import re
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN, parse_mode="Markdown")
 
-from oauth2client.service_account import ServiceAccountCredentials
-import gspread
-
+# Настройка Google Sheets
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
 
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 client = gspread.authorize(creds)
+
+SPREADSHEET_ID = "ВАШ_SPREADSHEET_ID"
 sheet = client.open_by_key(SPREADSHEET_ID).sheet1
+
+# Загрузка данных
+def load_data():
+    rows = sheet.get_all_records()
+    answers = []
+    for row in rows:
+        keys = [k.strip().lower() for k in row["Keys"].split(",") if k.strip()]
+        text = row["Text"]
+        answers.append({"keys": keys, "text": text})
+    return answers
+
+# Сохранение данных
+def save_data(answers):
+    sheet.clear()
+    sheet.append_row(["Keys", "Text"])
+    for item in answers:
+        sheet.append_row([",".join(item["keys"]), item["text"]])
 
 # Удаляем старый webhook, чтобы не было 409 Conflict
 bot.remove_webhook()
